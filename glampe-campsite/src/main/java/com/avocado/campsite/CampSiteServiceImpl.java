@@ -25,7 +25,9 @@ import com.avocado.selection.SelectionEntity;
 import com.avocado.selection.dto.req.SelectionCreateRequest;
 import com.avocado.utility.UtilityEntity;
 import com.avocado.utility.UtilityRepository;
+import com.avocado.utils.PageResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -75,12 +77,12 @@ public class CampSiteServiceImpl implements CampSiteService{
     }
 
     @Override
-    public List<CampSiteResponse> getAll(CampSiteFilterParams filterParams) {
+    public PageResponse<CampSiteResponse> getAll(CampSiteFilterParams filterParams) {
         Specification<CampSiteEntity> specification = filterParams.getSpecification();
         Sort sort = Sort.by(Sort.Direction.fromString(filterParams.getSortOrder()), filterParams.getSortBy());
         Pageable pageable = PageRequest.of(filterParams.getCurrentPage(), filterParams.getPageSize(), sort);
 
-        List<CampSiteEntity> entities = campSiteRepository.findAll(specification, pageable).getContent();
+        Page<CampSiteEntity> entities = campSiteRepository.findAll(specification, pageable);
 
         List<Long> userIds = entities.stream()
                 .map(CampSiteEntity::getUserId)
@@ -89,13 +91,23 @@ public class CampSiteServiceImpl implements CampSiteService{
 
         Map<Long, CampSiteUserResponse> userMap = userClient.getUsersByIds(userIds).getData();
 
-        return entities.stream()
-                .map(entity -> {
-                    CampSiteResponse response = CampSiteMapper.INSTANCE.toResponse(entity, s3Service);
-                    response.setUser(userMap.get(entity.getUserId()));
-                    return response;
-                })
-                .toList();
+        return PageResponse.<CampSiteResponse>builder()
+                .currentPage(filterParams.getCurrentPage())
+                .pageSize(filterParams.getPageSize())
+                .sortBy(filterParams.getSortBy())
+                .sortOrder(filterParams.getSortOrder())
+                .totalPages(entities.getTotalPages())
+                .totalRecords(entities.getTotalElements())
+                .records(
+                        entities.getContent().stream()
+                                .map(entity -> {
+                                    CampSiteResponse response = CampSiteMapper.INSTANCE.toResponse(entity, s3Service);
+                                    response.setUser(userMap.get(entity.getUserId()));
+                                    return response;
+                                })
+                                .toList()
+                )
+                .build();
     }
 
     @Override

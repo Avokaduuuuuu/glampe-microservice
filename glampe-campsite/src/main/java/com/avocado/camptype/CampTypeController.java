@@ -14,7 +14,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("api/v1/camp-types")
+@RequestMapping("api/v1/campsites/camp-types")
 @RequiredArgsConstructor
 public class CampTypeController {
 

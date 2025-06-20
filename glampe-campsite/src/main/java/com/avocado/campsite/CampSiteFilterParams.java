@@ -1,6 +1,6 @@
 package com.avocado.campsite;
 
-import com.avocado.utils.PageResponse;
+import com.avocado.utils.PageRequest;
 import jakarta.persistence.criteria.Predicate;
 import lombok.*;
 import org.springframework.data.jpa.domain.Specification;
@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CampSiteFilterParams extends PageResponse {
+public class CampSiteFilterParams extends PageRequest {
     private String name;
     private String address;
     private String city;
@@ -32,7 +32,7 @@ public class CampSiteFilterParams extends PageResponse {
                 predicates.add(cb.like(root.get("city"), "%" + city + "%"));
             }
             if (status != null) {
-                predicates.add(cb.like(root.get("status"), "%" + status + "%"));
+                predicates.add(cb.equal(root.get("status"), status));
             }
             return cb.and(predicates.toArray(new Predicate[0]));
         };

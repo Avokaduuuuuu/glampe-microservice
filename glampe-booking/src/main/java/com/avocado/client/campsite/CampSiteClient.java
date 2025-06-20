@@ -14,16 +14,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.util.List;
 import java.util.Map;
 
-@FeignClient(name = "campsite-service", url = "http://localhost:8082")
+@FeignClient(name = "campsite-service", url = "http://localhost:8082", path = "/api/v1/campsites")
 @Component
 public interface CampSiteClient {
-    @GetMapping("/api/v1/campsites/{id}")
+    @GetMapping("/{id}")
     ApiResponse<BookingCampSiteResponse> getBookingCampSite(@PathVariable("id") Long id);
 
 
-    @PostMapping("/api/v1/camp-types/batch")
+    @PostMapping("/camp-types/batch")
     ApiResponse<Map<Long, BookingCampTypeResponse>> getBookingCampTypes(@RequestBody List<Long> ids);
 
-    @PostMapping("/api/v1/campsites/batch")
+    @PostMapping("/batch")
     ApiResponse<Map<Long, BookingBasicCampSiteResponse>> getCampSitesBatch(@RequestBody List<Long> ids);
 }
