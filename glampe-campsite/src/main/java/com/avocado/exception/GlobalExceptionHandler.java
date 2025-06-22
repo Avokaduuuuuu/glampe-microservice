@@ -17,6 +17,7 @@ public class GlobalExceptionHandler {
                         ApiResponse
                                 .builder()
                                 .message(e.getResultCode().getMessage())
+                                .isSuccess(false)
                                 .statusCode(e.getResultCode().getCode())
                                 .build()
 
@@ -30,6 +31,7 @@ public class GlobalExceptionHandler {
                 .body(
                         ApiResponse.builder()
                                 .message(e.getMessage())
+                                .isSuccess(false)
                                 .statusCode(HttpStatus.BAD_REQUEST.value())
                                 .build()
                 );

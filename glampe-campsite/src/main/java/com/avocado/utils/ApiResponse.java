@@ -11,6 +11,8 @@ import lombok.experimental.FieldDefaults;
 public class ApiResponse<T> {
     private String message;
     private Integer statusCode;
+    @Builder.Default
+    private Boolean isSuccess = true;
     private T data;
 }
 

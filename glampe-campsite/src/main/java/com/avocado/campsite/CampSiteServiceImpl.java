@@ -57,11 +57,11 @@ public class CampSiteServiceImpl implements CampSiteService{
     public CampSiteResponse getCampSiteById(Long id) {
         CampSiteResponse response = cache.get(RedisPrefix.CAMPSITE.getPrefix() + id);
         if (response != null) {
-            notificationProducer.send(EmailEntity.builder()
-                    .subject("Fetch Campsite")
-                    .content("Fetch Campsite with id: " + id)
-                    .to("huatanthinh1207@gmail.com")
-                    .build());
+//            notificationProducer.send(EmailEntity.builder()
+//                    .subject("Fetch Campsite")
+//                    .content("Fetch Campsite with id: " + id)
+//                    .to("huatanthinh1207@gmail.com")
+//                    .build());
             return response;
         }
 

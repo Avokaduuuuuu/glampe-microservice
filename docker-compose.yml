@@ -6,13 +6,38 @@ x-common-env: &common-env
   DATABASE_PASSWORD: ${DATABASE_PASSWORD}
 
 services:
+
+  db:
+    image: mysql:8
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db-init:/docker-entrypoint-initdb.d
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+
+  gateway-service:
+    build: ./glampe-gateway
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8080:8080"
+
   user-service:
     build: ./glampe-user
     ports:
-      - "8081:8080"
+      - "8081:8080"  # host:container
     environment:
       SPRING_PROFILES_ACTIVE: docker
       DATABASE_USER: ${DATABASE_USER}
+      JWT_SECRET: ${JWT_SECRET}
+      REDIS_HOST: redis  # important: use service name!
       <<: *common-env
 
   campsite-service:
@@ -22,6 +47,9 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: docker
       DATABASE_CAMPSITE: ${DATABASE_CAMPSITE}
+      AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
+      AWS_SECRET_KEY: ${AWS_SECRET_KEY}
+      REDIS_HOST: redis
       <<: *common-env
 
   booking-service:
@@ -45,4 +73,4 @@ services:
   notification-service:
     build: ./glampe-notification
     ports:
-      - "8085-8080"
+      - "8085:8080"

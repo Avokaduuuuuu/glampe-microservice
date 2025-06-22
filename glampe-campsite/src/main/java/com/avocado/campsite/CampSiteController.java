@@ -35,7 +35,7 @@ public class CampSiteController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getAll(@RequestBody CampSiteFilterParams filterParams){
+    public ResponseEntity<?> getAll(CampSiteFilterParams filterParams){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(
                         ApiResponse.builder()
@@ -81,4 +81,5 @@ public class CampSiteController {
                                 .build()
                 );
     }
+
 }
