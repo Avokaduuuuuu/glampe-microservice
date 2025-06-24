@@ -9,7 +9,7 @@ services:
 
   db:
     image: mysql:8
-    restart: always
+    restart: no
     environment:
       MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
     ports:

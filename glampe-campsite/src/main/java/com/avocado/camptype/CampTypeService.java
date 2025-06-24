@@ -7,4 +7,6 @@ import java.util.Map;
 
 public interface CampTypeService {
     Map<Long, CampTypeResponse> getCampTypesByIds(List<Long> ids);
+
+    List<CampTypeResponse> getAllCampTypes(CampTypeFilterParams params);
 }

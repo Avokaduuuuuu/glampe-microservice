@@ -10,13 +10,13 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/s3")
+@RequestMapping("/api/v1/campsites/s3")
 @RequiredArgsConstructor
 public class S3Controller {
 
     private final S3Service s3Service;
 
-    @PostMapping("/campsites/{id}")
+    @PostMapping("/{id}")
     public ResponseEntity<?> uploadCampSiteImages(@RequestParam("files") List<MultipartFile> files, @PathVariable("id") Long id) {
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 ApiResponse.builder()

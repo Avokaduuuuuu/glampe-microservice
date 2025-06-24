@@ -9,5 +9,5 @@ import java.util.List;
 public interface CampSiteRepository extends JpaRepository<CampSiteEntity, Long>, JpaSpecificationExecutor<CampSiteEntity> {
     List<CampSiteEntity> findAllByIdIn(List<Long> ids);
 
-    List<Long> id(Long id);
+
 }

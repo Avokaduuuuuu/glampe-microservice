@@ -22,6 +22,7 @@ public class CampTypeResponse {
     BigDecimal price;
     BigDecimal weekendPrice;
     Integer quantity;
+    Long remainQuantity;
     String image;
     Boolean isDeleted;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
