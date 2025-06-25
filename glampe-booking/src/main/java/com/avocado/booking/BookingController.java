@@ -40,7 +40,7 @@ public class BookingController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getAllBookings(@RequestBody BookingFilterParams params){
+    public ResponseEntity<?> getAllBookings(BookingFilterParams params){
         return ResponseEntity.status(HttpStatus.OK)
                 .body(
                         ApiResponse.builder()

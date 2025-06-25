@@ -9,6 +9,7 @@ import com.avocado.selection.SelectionMapper;
 import com.avocado.utility.UtilityMapper;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
@@ -19,6 +20,10 @@ import org.mapstruct.factory.Mappers;
 )
 public interface CampSiteMapper {
     CampSiteMapper INSTANCE = Mappers.getMapper(CampSiteMapper.class);
+    @Mapping(target = "galleries", qualifiedByName = "withS3")
     CampSiteResponse toResponse(CampSiteEntity entity, @Context S3Service s3Service);
+
+    @Mapping(target = "galleries", qualifiedByName = "raw")
+    CampSiteResponse toResponseWithoutImage(CampSiteEntity entity);
 
 }

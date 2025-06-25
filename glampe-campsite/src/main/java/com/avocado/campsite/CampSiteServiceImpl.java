@@ -17,6 +17,7 @@ import com.avocado.exception.CampSiteException;
 import com.avocado.exception.ResultCode;
 import com.avocado.facility.FacilityEntity;
 import com.avocado.facility.FacilityRepository;
+import com.avocado.gallery.CampSiteGalleryMapper;
 import com.avocado.kafka.NotificationProducer;
 import com.avocado.placetype.PlaceTypeEntity;
 import com.avocado.placetype.PlaceTypeRepository;
@@ -57,6 +58,7 @@ public class CampSiteServiceImpl implements CampSiteService{
     public CampSiteResponse getCampSiteById(Long id) {
         CampSiteResponse response = cache.get(RedisPrefix.CAMPSITE.getPrefix() + id);
         if (response != null) {
+            response.getGalleries().forEach(gallery -> gallery.setPath(gallery.toS3PresignedUrl(s3Service)));
 //            notificationProducer.send(EmailEntity.builder()
 //                    .subject("Fetch Campsite")
 //                    .content("Fetch Campsite with id: " + id)
@@ -69,9 +71,10 @@ public class CampSiteServiceImpl implements CampSiteService{
                 .findById(id)
                 .orElseThrow(() -> new CampSiteException(ResultCode.CAMPSITE_NOT_FOUND));
 
-        response = CampSiteMapper.INSTANCE.toResponse(campSiteEntity, s3Service);
+        response = CampSiteMapper.INSTANCE.toResponseWithoutImage(campSiteEntity);
         response.setUser(userClient.getUserById(campSiteEntity.getUserId()).getData());
         cache.put(RedisPrefix.CAMPSITE.getPrefix() + id, response);
+        response.setGalleries(campSiteEntity.getGalleries().stream().map(gallery -> CampSiteGalleryMapper.INSTANCE.toResponseWithS3(gallery, s3Service)).toList());
 
         return response;
     }

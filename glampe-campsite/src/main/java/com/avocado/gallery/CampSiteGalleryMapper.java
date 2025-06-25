@@ -2,18 +2,21 @@ package com.avocado.gallery;
 
 import com.avocado.gallery.dto.resp.CampSiteGalleryResponse;
 import com.avocado.s3.S3Service;
-import org.mapstruct.Context;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.ReportingPolicy;
+import org.mapstruct.*;
+import org.mapstruct.factory.Mappers;
 
 @Mapper(
         unmappedSourcePolicy = ReportingPolicy.IGNORE,
         unmappedTargetPolicy = ReportingPolicy.IGNORE
 )
 public interface CampSiteGalleryMapper {
-    CampSiteGalleryMapper INSTANCE = org.mapstruct.factory.Mappers.getMapper(CampSiteGalleryMapper.class);
+    CampSiteGalleryMapper INSTANCE = Mappers.getMapper(CampSiteGalleryMapper.class);
 
+    @Named("withS3")
     @Mapping(target = "path", expression = "java(s3Service.generateUrl(entity.getPath()))")
-    CampSiteGalleryResponse toResponse(CampSiteGalleryEntity entity, @Context S3Service s3Service);
+    CampSiteGalleryResponse toResponseWithS3(CampSiteGalleryEntity entity, @Context S3Service s3Service);
+
+    @Named("raw")
+    @Mapping(target = "path", source = "path")
+    CampSiteGalleryResponse toResponseRaw(CampSiteGalleryEntity entity);
 }
