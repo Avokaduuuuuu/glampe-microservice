@@ -4,13 +4,15 @@ import com.avocado.exception.ResultCode;
 import com.avocado.exception.UserException;
 import com.avocado.user.cache.Cache;
 import com.avocado.user.cache.RedisPrefix;
+import com.avocado.user.dto.req.UserAddRequest;
 import com.avocado.user.dto.req.UserVerifyRequest;
 import com.avocado.user.dto.resp.AuthUserResponse;
 import com.avocado.user.dto.resp.UserResponse;
+import com.avocado.user.enums.UserRoleEnum;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -51,9 +53,34 @@ public class UserServiceImpl implements UserService{
             authUserResponse.setIsNew(true);
         }else {
             UserEntity userEntity = user.get();
+            userEntity.setLastLoginDate(LocalDate.now());
+            userRepository.save(userEntity);
             authUserResponse.setIsNew(false);
             authUserResponse.setUser(UserMapper.INSTANCE.toResponse(userEntity));
         }
         return authUserResponse;
+    }
+
+    @Override
+    public AuthUserResponse addNewUser(UserAddRequest request) {
+        Optional<UserEntity> user = userRepository.findByEmail(request.email());
+        if (user.isPresent()) {
+            throw  new UserException(ResultCode.USER_EXISTS);
+        }
+        UserResponse userResponse = UserMapper.INSTANCE.toResponse(userRepository.save(
+                UserEntity.builder()
+                        .email(request.email())
+                        .firstName(request.firstName())
+                        .lastName(request.lastName())
+                        .address(request.address())
+                        .phoneNumber(request.phoneNumber())
+                        .dob(request.dob())
+                        .role(UserRoleEnum.ROLE_USER)
+                        .build()
+        ));
+        return AuthUserResponse.builder()
+                .isNew(false)
+                .user(userResponse)
+                .build();
     }
 }

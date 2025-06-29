@@ -8,7 +8,8 @@ public enum ResultCode {
     /**
      * User
      */
-    USER_NOT_FOUND(1000, "User not found", HttpStatus.NOT_FOUND);
+    USER_NOT_FOUND(1000, "User not found", HttpStatus.NOT_FOUND),
+    USER_EXISTS(1001, "User already exists" , HttpStatus.CONFLICT),;
 
     private final int code;
     private final String message;

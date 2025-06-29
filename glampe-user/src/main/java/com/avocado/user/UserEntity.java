@@ -8,6 +8,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
@@ -20,6 +21,7 @@ import java.util.List;
 @Entity
 @Table(name = "user")
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@EntityListeners(AuditingEntityListener.class)
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,20 +54,24 @@ public class UserEntity {
     String connectionId;
 
     @Column(name = "is_deleted")
-    Boolean isDeleted;
+    @Builder.Default
+    Boolean isDeleted = false;
 
     @Column(name = "avatar")
     String avatar;
 
     @Column(name = "last_login_date")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @CreatedDate
     LocalDate lastLoginDate;
 
     @Column(name = "is_owner")
-    Boolean isOwner;
+    @Builder.Default
+    Boolean isOwner = false;
 
     @Column(name = "total_points")
-    Long totalPoints;
+    @Builder.Default
+    Long totalPoints = 0L;
 
     @Column(name = "created_at")
     @CreatedDate

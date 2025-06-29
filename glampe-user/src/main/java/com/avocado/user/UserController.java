@@ -1,6 +1,7 @@
 package com.avocado.user;
 
 import com.avocado.config.ApiResponse;
+import com.avocado.user.dto.req.UserAddRequest;
 import com.avocado.user.dto.req.UserVerifyRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -51,6 +52,17 @@ public class UserController {
                         .message("Verify Successfully")
                         .data(userService.verifyUser(userVerifyRequest))
                         .build()
+        );
+    }
+
+    @PostMapping
+    public ResponseEntity<?> updateUser(@RequestBody UserAddRequest userUpdateRequest){
+        return ResponseEntity.status(HttpStatus.OK).body(
+                ApiResponse.builder()
+                .statusCode(HttpStatus.OK.value())
+                .message("Update Successfully")
+                .data(userService.addNewUser(userUpdateRequest))
+                .build()
         );
     }
 
