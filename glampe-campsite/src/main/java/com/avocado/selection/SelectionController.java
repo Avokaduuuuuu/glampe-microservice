@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("api/v1/campsites/selections")
 @RequiredArgsConstructor
@@ -32,6 +34,17 @@ public class SelectionController {
                         .message("Success")
                         .statusCode(HttpStatus.OK.value())
                         .data(selectionService.update(request, id))
+                        .build()
+        );
+    }
+
+    @PostMapping("/batch")
+    public ResponseEntity<?> batch(@RequestBody List<Long> ids){
+        return ResponseEntity.status(HttpStatus.OK).body(
+                ApiResponse.builder()
+                        .message("Success")
+                        .statusCode(HttpStatus.OK.value())
+                        .data(selectionService.batch(ids))
                         .build()
         );
     }

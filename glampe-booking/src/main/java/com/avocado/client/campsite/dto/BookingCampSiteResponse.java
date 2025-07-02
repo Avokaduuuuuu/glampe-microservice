@@ -31,7 +31,7 @@ public class BookingCampSiteResponse {
     LocalDateTime updatedAt;
     List<BookingUtilityResponse> utilities;
     List<BookingPlaceTypeResponse> placeTypes;
-    List<BookingSelectionResponse> selections;
+    List<BookingCampSiteSelectionResponse> selections;
     List<BookingCampSiteGalleryResponse> galleries;
     List<BookingCampTypeResponse> campTypes;
 

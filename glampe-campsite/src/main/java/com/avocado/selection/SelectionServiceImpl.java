@@ -8,6 +8,10 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -33,5 +37,11 @@ public class SelectionServiceImpl implements SelectionService {
                         )
                 )
         );
+    }
+
+    @Override
+    public Map<Long, SelectionResponse> batch(List<Long> ids) {
+        return selectionRepository.findAllByIdIn(ids)
+                .stream().collect(Collectors.toMap(SelectionEntity::getId, SelectionMapper.INSTANCE::toResponse));
     }
 }

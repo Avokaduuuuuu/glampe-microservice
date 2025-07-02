@@ -2,6 +2,7 @@ package com.avocado.client.campsite;
 
 import com.avocado.client.campsite.dto.BookingBasicCampSiteResponse;
 import com.avocado.client.campsite.dto.BookingCampSiteResponse;
+import com.avocado.client.campsite.dto.BookingCampSiteSelectionResponse;
 import com.avocado.client.campsite.dto.BookingCampTypeResponse;
 import com.avocado.utils.ApiResponse;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -26,4 +27,7 @@ public interface CampSiteClient {
 
     @PostMapping("/batch")
     ApiResponse<Map<Long, BookingBasicCampSiteResponse>> getCampSitesBatch(@RequestBody List<Long> ids);
+
+    @PostMapping("/selections/batch")
+    ApiResponse<Map<Long, BookingCampSiteSelectionResponse>> getCampSitesSelections(@RequestBody List<Long> ids);
 }

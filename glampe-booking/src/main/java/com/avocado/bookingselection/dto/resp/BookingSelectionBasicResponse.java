@@ -1,6 +1,5 @@
 package com.avocado.bookingselection.dto.resp;
 
-import com.avocado.client.campsite.dto.BookingCampSiteSelectionResponse;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -9,10 +8,11 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class BookingSelectionResponse {
+public class BookingSelectionBasicResponse {
 
     Long id;
-    BookingCampSiteSelectionResponse selection;
+    Long selectionId;
     String name;
     Integer quantity;
+    Long bookingId;
 }

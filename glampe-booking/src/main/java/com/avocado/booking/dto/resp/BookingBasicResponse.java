@@ -2,7 +2,6 @@ package com.avocado.booking.dto.resp;
 
 import com.avocado.bookingdetail.dto.resp.BookingDetailResponse;
 import com.avocado.bookingselection.dto.resp.BookingSelectionBasicResponse;
-import com.avocado.bookingselection.dto.resp.BookingSelectionResponse;
 import com.avocado.client.campsite.dto.BookingBasicCampSiteResponse;
 import com.avocado.client.user.dto.BookingUserResponse;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -18,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class BookingResponse {
+public class BookingBasicResponse {
     Long id;
     BookingUserResponse user;
     String status;
@@ -39,5 +38,5 @@ public class BookingResponse {
     LocalDateTime updatedAt;
     BookingBasicCampSiteResponse campSite;
     List<BookingDetailResponse> bookingDetails;
-    List<BookingSelectionResponse> bookingSelections;
+    List<BookingSelectionBasicResponse> bookingSelections;
 }

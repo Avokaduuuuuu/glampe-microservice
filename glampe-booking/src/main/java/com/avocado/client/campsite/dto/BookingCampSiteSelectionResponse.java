@@ -1,5 +1,6 @@
 package com.avocado.client.campsite.dto;
 
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -9,10 +10,10 @@ import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @Data
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class BookingSelectionResponse {
+public class BookingCampSiteSelectionResponse {
     Long id;
     String name;
     String description;

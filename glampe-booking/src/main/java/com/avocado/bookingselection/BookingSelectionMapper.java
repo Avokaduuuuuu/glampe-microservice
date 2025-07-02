@@ -1,5 +1,6 @@
 package com.avocado.bookingselection;
 
+import com.avocado.bookingselection.dto.resp.BookingSelectionBasicResponse;
 import com.avocado.bookingselection.dto.resp.BookingSelectionResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -14,5 +15,7 @@ public interface BookingSelectionMapper {
     BookingSelectionMapper INSTANCE = Mappers.getMapper(BookingSelectionMapper.class);
 
     @Mapping(target = "bookingId", source = "id")
-    BookingSelectionResponse toResponse (BookingSelectionEntity bookingSelectionEntity);
+    BookingSelectionBasicResponse toResponse (BookingSelectionEntity bookingSelectionEntity);
+
+    BookingSelectionResponse toDetailResponse(BookingSelectionEntity bookingSelectionEntity);
 }

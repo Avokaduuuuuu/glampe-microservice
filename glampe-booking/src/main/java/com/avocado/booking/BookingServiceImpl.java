@@ -3,6 +3,7 @@ package com.avocado.booking;
 import com.avocado.booking.dto.req.BookingDetailRequest;
 import com.avocado.booking.dto.req.BookingRequest;
 import com.avocado.booking.dto.req.BookingSelectionRequest;
+import com.avocado.booking.dto.resp.BookingBasicResponse;
 import com.avocado.booking.dto.resp.BookingResponse;
 import com.avocado.booking.enums.BookingStatusEnum;
 import com.avocado.bookingdetail.BookingDetailEntity;
@@ -10,11 +11,11 @@ import com.avocado.bookingdetail.BookingDetailMapper;
 import com.avocado.bookingdetail.dto.resp.BookingDetailResponse;
 import com.avocado.bookingdetail.enums.BookingDetailStatusEnum;
 import com.avocado.bookingselection.BookingSelectionEntity;
+import com.avocado.bookingselection.BookingSelectionMapper;
+import com.avocado.bookingselection.dto.resp.BookingSelectionBasicResponse;
+import com.avocado.bookingselection.dto.resp.BookingSelectionResponse;
 import com.avocado.client.campsite.CampSiteClient;
-import com.avocado.client.campsite.dto.BookingBasicCampSiteResponse;
-import com.avocado.client.campsite.dto.BookingCampSiteResponse;
-import com.avocado.client.campsite.dto.BookingCampTypeResponse;
-import com.avocado.client.campsite.dto.BookingSelectionResponse;
+import com.avocado.client.campsite.dto.*;
 import com.avocado.client.user.UserClient;
 import com.avocado.utils.ApiResponse;
 import com.avocado.config.SystemProperties;
@@ -55,7 +56,10 @@ public class BookingServiceImpl implements BookingService{
         BookingEntity bookingEntity = bookingRepository.findById(id)
                 .orElseThrow(() -> new BookingException(ResultCode.BOOKING_NOT_FOUND));
 
+        BookingBasicCampSiteResponse bookingBasicCampSiteResponse = campSiteClient.getCampSitesBatch(List.of(bookingEntity.getCampSiteId())).getData().get(bookingEntity.getCampSiteId());
+
         BookingResponse response = BookingMapper.INSTANCE.toResponse(bookingEntity);
+        response.setCampSite(bookingBasicCampSiteResponse);
         response.setUser(userClient.getUserById(bookingEntity.getUserId()).getData());
         ApiResponse<Map<Long, BookingCampTypeResponse>> campTypeMap = campSiteClient.getBookingCampTypes(bookingEntity.getBookingDetails().stream().map(BookingDetailEntity::getCampTypeId).toList());
         response.setBookingDetails(bookingEntity.getBookingDetails().stream().map(bd -> {
@@ -65,11 +69,22 @@ public class BookingServiceImpl implements BookingService{
             log.info("BookingDetailResponse {}", bdr);
             return bdr;
         }).toList());
+
+        ApiResponse<Map<Long, BookingCampSiteSelectionResponse>> selectionMap = campSiteClient.getCampSitesSelections(bookingEntity.getBookingSelections().stream().map(BookingSelectionEntity::getSelectionId).toList());
+        log.info("BookingSelectionResponse {}", selectionMap);
+        response.setBookingSelections(bookingEntity.getBookingSelections().stream().map(bs -> {
+            BookingSelectionResponse bsr = BookingSelectionMapper.INSTANCE.toDetailResponse(bs);
+            log.info("Selection Id {}", bs.getSelectionId());
+            log.info("Selection Response {}", selectionMap.getData().get(bs.getSelectionId()));
+            bsr.setSelection(selectionMap.getData().get(bs.getSelectionId()));
+            log.info("BookingSelectionResponse {}", bsr);
+            return bsr;
+        }).toList());
         return response;
     }
 
     @Override
-    public BookingResponse createBooking(BookingRequest request) {
+    public BookingBasicResponse createBooking(BookingRequest request) {
         userClient.getUserById(request.userId());
         BigDecimal systemFee = request.totalAmount().multiply(BigDecimal.valueOf(SystemProperties.SYSTEM_FEE.getValue()));
 
@@ -78,7 +93,7 @@ public class BookingServiceImpl implements BookingService{
         log.info("Campsite response: {}", campSiteResponse);
 
         List<BookingCampTypeResponse> campTypes = campSiteResponse.getCampTypes();
-        List<BookingSelectionResponse> selections = campSiteResponse.getSelections();
+        List<BookingCampSiteSelectionResponse> selections = campSiteResponse.getSelections();
 
         Map<Long, BookingCampTypeResponse> campTypeMap = campTypes.stream()
                 .collect(Collectors.toMap(BookingCampTypeResponse::getId, Function.identity()));
@@ -88,9 +103,9 @@ public class BookingServiceImpl implements BookingService{
 
         log.info("Booking detail response: {}", bookingDetailCampTypeMap);
 
-        Map<Long, BookingSelectionResponse> selectionMap = selections.stream()
-                .collect(Collectors.toMap(BookingSelectionResponse::getId, Function.identity()));
-        Map<BookingSelectionRequest, BookingSelectionResponse> bookingSelectionMap = request.bookingSelectionRequests().stream()
+        Map<Long, BookingCampSiteSelectionResponse> selectionMap = selections.stream()
+                .collect(Collectors.toMap(BookingCampSiteSelectionResponse::getId, Function.identity()));
+        Map<BookingSelectionRequest, BookingCampSiteSelectionResponse> bookingSelectionMap = request.bookingSelectionRequests().stream()
                 .filter(bsr -> selectionMap.containsKey(bsr.selectionId()))
                 .collect(Collectors.toMap(Function.identity(), bsr -> selectionMap.get(bsr.selectionId())));
 
@@ -116,12 +131,12 @@ public class BookingServiceImpl implements BookingService{
 
 
 
-        BookingResponse bookingResponse = BookingMapper.INSTANCE.toResponse(bookingRepository.save(bookingEntity));
+        BookingBasicResponse bookingResponse = BookingMapper.INSTANCE.toBasicResponse(bookingRepository.save(bookingEntity));
         return bookingResponse;
     }
 
     @Override
-    public PageResponse<BookingResponse> fetchAll(BookingFilterParams params) {
+    public PageResponse<BookingBasicResponse> fetchAll(BookingFilterParams params) {
         Specification<BookingEntity> specification = params.getSpecification();
         Sort sort = Sort.by(Sort.Direction.fromString(params.getSortOrder()), params.getSortBy());
         Pageable pageable = PageRequest.of(params.getCurrentPage(), params.getPageSize(), sort);
@@ -133,7 +148,7 @@ public class BookingServiceImpl implements BookingService{
         );
 
 
-        return PageResponse.<BookingResponse>builder()
+        return PageResponse.<BookingBasicResponse>builder()
                 .currentPage(params.getCurrentPage())
                 .pageSize(params.getPageSize())
                 .sortBy(params.getSortBy())
@@ -141,7 +156,7 @@ public class BookingServiceImpl implements BookingService{
                 .totalPages(bookingEntities.getTotalPages())
                 .totalRecords(bookingEntities.getTotalElements())
                 .records(bookingEntities.getContent().stream().map(bookingEntity -> {
-                    BookingResponse bookingResponse = BookingMapper.INSTANCE.toResponse(bookingEntity);
+                    BookingBasicResponse bookingResponse = BookingMapper.INSTANCE.toBasicResponse(bookingEntity);
                     bookingResponse.setCampSite(bookingCampSiteMap.getData().get(bookingEntity.getCampSiteId()));
                     return bookingResponse;
                 }).toList())
@@ -151,20 +166,22 @@ public class BookingServiceImpl implements BookingService{
     private List<BookingDetailEntity> toBookingDetailList(Map<BookingDetailRequest, BookingCampTypeResponse> bookingDetailRequest, BookingEntity bookingEntity) {
         List<BookingDetailEntity> bookingDetailEntities = new ArrayList<>();
         bookingDetailRequest.forEach((key, value) -> {
-            Long totalDays = Math.max(1, ChronoUnit.DAYS.between(bookingEntity.getCheckInAt(), bookingEntity.getCheckOutAt()));
-            Long weekendDays = countWeekendDays(bookingEntity.getCheckInAt(), bookingEntity.getCheckOutAt());
-            long weekDays = totalDays - weekendDays;
-            bookingDetailEntities.add(
-                    BookingDetailEntity.builder()
-                            .campTypeId(key.campTypeId())
-                            .amount(
-                                    value.getPrice().multiply(BigDecimal.valueOf(weekDays)).add(value.getWeekendPrice().multiply(BigDecimal.valueOf(weekendDays)))
-                            )
-                            .status(BookingDetailStatusEnum.Pending)
-                            .booking(bookingEntity)
-                            .build()
-            );
-            log.info("Booking Detail End");
+            for (int i = 0;i<key.quantity();++i) {
+                Long totalDays = Math.max(1, ChronoUnit.DAYS.between(bookingEntity.getCheckInAt(), bookingEntity.getCheckOutAt()));
+                Long weekendDays = countWeekendDays(bookingEntity.getCheckInAt(), bookingEntity.getCheckOutAt());
+                long weekDays = totalDays - weekendDays;
+                bookingDetailEntities.add(
+                        BookingDetailEntity.builder()
+                                .campTypeId(key.campTypeId())
+                                .amount(
+                                        value.getPrice().multiply(BigDecimal.valueOf(weekDays)).add(value.getWeekendPrice().multiply(BigDecimal.valueOf(weekendDays)))
+                                )
+                                .status(BookingDetailStatusEnum.Pending)
+                                .booking(bookingEntity)
+                                .build()
+                );
+                log.info("Booking Detail End");
+            }
         });
         return bookingDetailEntities;
     }
@@ -191,7 +208,7 @@ public class BookingServiceImpl implements BookingService{
     }
 
 
-    private List<BookingSelectionEntity> toBookingSelectionRequest(Map<BookingSelectionRequest, BookingSelectionResponse> bookingSelectionRequest, BookingEntity bookingEntity) {
+    private List<BookingSelectionEntity> toBookingSelectionRequest(Map<BookingSelectionRequest, BookingCampSiteSelectionResponse> bookingSelectionRequest, BookingEntity bookingEntity) {
         List<BookingSelectionEntity> bookingSelectionEntities = new ArrayList<>();
         bookingSelectionRequest.forEach((key, value) -> {
             bookingSelectionEntities.add(BookingSelectionEntity
