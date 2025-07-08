@@ -8,9 +8,7 @@ CREATE TABLE `payment` (
     `payment_method` VARCHAR(255) DEFAULT "",
     `total_amount` DECIMAL(20,2) DEFAULT 0.0,
     `status` ENUM('Pending', 'Completed', 'Failed'),
-    `id_transaction` VARCHAR(255),
-    `id_session` VARCHAR(255),
-    `url` text, 
+    `payment_intent_id` VARCHAR(255),
     `completed_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
     `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
     `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP

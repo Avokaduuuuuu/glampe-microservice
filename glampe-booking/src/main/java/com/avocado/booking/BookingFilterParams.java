@@ -17,14 +17,14 @@ import java.util.List;
 public class BookingFilterParams extends PageRequest {
     Long userId;
     Long campSiteId;
-    String status;
+    List<String> statusList;
 
     public Specification<BookingEntity> getSpecification() {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
             if (userId != null) predicates.add(cb.equal(root.get("userId"), userId));
             if (campSiteId != null) predicates.add(cb.equal(root.get("campSiteId"), campSiteId));
-            if (status != null) predicates.add(cb.equal(root.get("status"), status));
+            if (statusList != null) predicates.add(root.get("status").in(statusList));
 
             return cb.and(predicates.toArray(new Predicate[0]));
         };

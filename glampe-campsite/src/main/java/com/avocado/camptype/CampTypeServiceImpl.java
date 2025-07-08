@@ -4,6 +4,7 @@ import com.avocado.camptype.dto.resp.CampTypeResponse;
 import com.avocado.client.booking.dto.BookingClient;
 import com.avocado.client.booking.dto.req.CampTypeBookedRequest;
 import com.avocado.client.booking.dto.resp.CampTypeBookedResponse;
+import com.avocado.s3.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +22,7 @@ public class CampTypeServiceImpl implements CampTypeService {
 
     private final CampTypeRepository campTypeRepository;
     private final BookingClient bookingClient;
+    private final S3Service s3Service;
 
     @Override
     public Map<Long, CampTypeResponse> getCampTypesByIds(List<Long> ids) {
@@ -49,10 +51,12 @@ public class CampTypeServiceImpl implements CampTypeService {
             for (CampTypeResponse response : campTypeResponses) {
                 long booked = bookedQuantityMap.getOrDefault(response.getId(), 0L);
                 response.setRemainQuantity(response.getQuantity() - booked);
+                response.setImage(response.toS3PresignedUrl(s3Service));
             }
         } else {
             for (CampTypeResponse response : campTypeResponses) {
                 response.setRemainQuantity((long) response.getQuantity());
+                response.setImage(response.toS3PresignedUrl(s3Service));
             }
         }
 

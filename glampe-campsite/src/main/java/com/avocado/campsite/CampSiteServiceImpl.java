@@ -59,6 +59,8 @@ public class CampSiteServiceImpl implements CampSiteService{
         CampSiteResponse response = cache.get(RedisPrefix.CAMPSITE.getPrefix() + id);
         if (response != null) {
             response.getGalleries().forEach(gallery -> gallery.setPath(gallery.toS3PresignedUrl(s3Service)));
+            response.getCampTypes().forEach(campType -> campType.setImage(campType.toS3PresignedUrl(s3Service)));
+            response.getSelections().forEach(selection -> selection.setImage(selection.toS3PresignUrl(s3Service)));
 //            notificationProducer.send(EmailEntity.builder()
 //                    .subject("Fetch Campsite")
 //                    .content("Fetch Campsite with id: " + id)
@@ -75,6 +77,8 @@ public class CampSiteServiceImpl implements CampSiteService{
         response.setUser(userClient.getUserById(campSiteEntity.getUserId()).getData());
         cache.put(RedisPrefix.CAMPSITE.getPrefix() + id, response);
         response.setGalleries(campSiteEntity.getGalleries().stream().map(gallery -> CampSiteGalleryMapper.INSTANCE.toResponseWithS3(gallery, s3Service)).toList());
+        response.getCampTypes().forEach(campType -> campType.setImage(campType.toS3PresignedUrl(s3Service)));
+        response.getSelections().forEach(selection -> selection.setImage(selection.toS3PresignUrl(s3Service)));
 
         return response;
     }

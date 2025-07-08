@@ -3,6 +3,7 @@ package com.avocado.booking;
 import com.avocado.booking.dto.req.BookingDetailRequest;
 import com.avocado.booking.dto.req.BookingRequest;
 import com.avocado.booking.dto.req.BookingSelectionRequest;
+import com.avocado.booking.dto.req.BookingUpdateRequest;
 import com.avocado.booking.dto.resp.BookingBasicResponse;
 import com.avocado.booking.dto.resp.BookingResponse;
 import com.avocado.booking.enums.BookingStatusEnum;
@@ -163,6 +164,15 @@ public class BookingServiceImpl implements BookingService{
                 .build();
     }
 
+    @Override
+    public BookingBasicResponse updateBooking(BookingUpdateRequest request, Long id) {
+        BookingEntity bookingEntity = bookingRepository.findById(id)
+                .orElseThrow(() -> new BookingException(ResultCode.BOOKING_NOT_FOUND));
+
+        bookingEntity.setStatus(request.status());
+        return BookingMapper.INSTANCE.toBasicResponse(bookingRepository.save(bookingEntity));
+    }
+
     private List<BookingDetailEntity> toBookingDetailList(Map<BookingDetailRequest, BookingCampTypeResponse> bookingDetailRequest, BookingEntity bookingEntity) {
         List<BookingDetailEntity> bookingDetailEntities = new ArrayList<>();
         bookingDetailRequest.forEach((key, value) -> {
@@ -198,7 +208,7 @@ public class BookingServiceImpl implements BookingService{
 
         while (date.isBefore(endDate)) {
             DayOfWeek dayOfWeek = date.getDayOfWeek();
-            if (dayOfWeek == DayOfWeek.FRIDAY || dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY) {
+            if (dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY) {
                 count++;
             }
             date = date.plusDays(1);

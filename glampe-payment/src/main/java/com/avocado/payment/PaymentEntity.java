@@ -6,9 +6,11 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -17,6 +19,7 @@ import java.math.BigDecimal;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 @Table(name = "payment")
+@EntityListeners(AuditingEntityListener.class)
 public class PaymentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,33 +31,29 @@ public class PaymentEntity {
     @Column(name = "payment_method")
     String paymentMethod;
 
+    @Column(name = "payment_intent_id")
+    String paymentIntentId;
+
     @Column(name = "total_amount")
     BigDecimal totalAmount;
 
     @Column(name = "status")
+    @Enumerated(EnumType.STRING)
     PaymentStatusEnum status;
 
-    @Column(name = "id_transaction")
-    String transactionId;
-
-    @Column(name = "id_session")
-    String sessionId;
-
-    @Column(name = "url")
-    String url;
 
     @Column(name = "completed_at")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    String completedAt;
+    LocalDateTime completedAt;
 
     @Column(name = "created_at")
     @CreatedDate
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    String createdAt;
+    LocalDateTime createdAt;
 
     @Column(name = "updated_at")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @LastModifiedDate
-    String updatedAt;
+    LocalDateTime updatedAt;
 
 }

@@ -1,6 +1,7 @@
 package com.avocado.booking;
 
 import com.avocado.booking.dto.req.BookingRequest;
+import com.avocado.booking.dto.req.BookingUpdateRequest;
 import com.avocado.utils.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -47,6 +48,18 @@ public class BookingController {
                                 .statusCode(HttpStatus.OK.value())
                                 .message("Fetching all bookings")
                                 .data(bookingService.fetchAll(params))
+                                .build()
+                );
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateBooking(@RequestBody @Valid BookingUpdateRequest request, @PathVariable Long id){
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(
+                        ApiResponse.builder()
+                                .statusCode(HttpStatus.OK.value())
+                                .message("Booking updated")
+                                .data(bookingService.updateBooking(request, id))
                                 .build()
                 );
     }

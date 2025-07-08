@@ -38,7 +38,13 @@ public enum ResultCode {
     /**
      * Gallery
      */
-    INVALID_FILE(7000, "Invalid file", HttpStatus.BAD_REQUEST);
+    INVALID_FILE(7000, "Invalid file", HttpStatus.BAD_REQUEST),
+
+
+    /**
+     * Camptype
+     */
+    CAMPTYPE_NOT_FOUND(8000, "Camp type not found", HttpStatus.NOT_FOUND);
 
 
 
