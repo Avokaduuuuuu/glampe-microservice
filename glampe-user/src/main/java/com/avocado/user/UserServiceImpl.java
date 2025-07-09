@@ -5,6 +5,7 @@ import com.avocado.exception.UserException;
 import com.avocado.user.cache.Cache;
 import com.avocado.user.cache.RedisPrefix;
 import com.avocado.user.dto.req.UserAddRequest;
+import com.avocado.user.dto.req.UserUpdateRequest;
 import com.avocado.user.dto.req.UserVerifyRequest;
 import com.avocado.user.dto.resp.AuthUserResponse;
 import com.avocado.user.dto.resp.UserResponse;
@@ -55,7 +56,6 @@ public class UserServiceImpl implements UserService{
             UserEntity userEntity = user.get();
             userEntity.setLastLoginDate(LocalDate.now());
             userRepository.save(userEntity);
-            authUserResponse.setIsNew(false);
             authUserResponse.setUser(UserMapper.INSTANCE.toResponse(userEntity));
         }
         return authUserResponse;
@@ -79,8 +79,22 @@ public class UserServiceImpl implements UserService{
                         .build()
         ));
         return AuthUserResponse.builder()
-                .isNew(false)
                 .user(userResponse)
+                .build();
+    }
+
+    @Override
+    public AuthUserResponse updateUser(UserUpdateRequest request, Long id) {
+        UserEntity user = userRepository.findById(id).orElseThrow(() -> new UserException(ResultCode.USER_NOT_FOUND));
+
+        if (request.firstName() != null) user.setFirstName(request.firstName());
+        if (request.lastName() != null) user.setLastName(request.lastName());
+        if (request.address() != null) user.setAddress(request.address());
+        if (request.phoneNumber() != null) user.setPhoneNumber(request.phoneNumber());
+        if (request.dob() != null) user.setDob(request.dob());
+        return AuthUserResponse.builder()
+                .user(UserMapper.INSTANCE.toResponse(user))
+                .isNew(false)
                 .build();
     }
 }

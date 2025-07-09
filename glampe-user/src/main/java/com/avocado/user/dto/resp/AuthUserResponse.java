@@ -10,6 +10,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AuthUserResponse {
     UserResponse user;
-    Boolean isNew;
+    @Builder.Default
+    Boolean isNew = false;
     String token;
 }

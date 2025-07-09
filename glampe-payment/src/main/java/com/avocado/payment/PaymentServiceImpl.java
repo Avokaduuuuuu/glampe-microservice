@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService{
@@ -74,6 +76,7 @@ public class PaymentServiceImpl implements PaymentService{
             switch (intent.getStatus()) {
                 case "succeeded" -> {
                     newStatus = PaymentStatusEnum.Completed;
+                    payment.setCompletedAt(LocalDateTime.now());
                     bookingClient.updateBooking(new BookingUpdateRequest("Deposit"), payment.getBookingId());
                 }
                 case "payment_failed", "canceled" -> newStatus = PaymentStatusEnum.Failed;

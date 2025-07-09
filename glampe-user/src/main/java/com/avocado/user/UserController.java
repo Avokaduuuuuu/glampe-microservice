@@ -2,7 +2,9 @@ package com.avocado.user;
 
 import com.avocado.config.ApiResponse;
 import com.avocado.user.dto.req.UserAddRequest;
+import com.avocado.user.dto.req.UserUpdateRequest;
 import com.avocado.user.dto.req.UserVerifyRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -56,13 +58,24 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<?> updateUser(@RequestBody UserAddRequest userUpdateRequest){
+    public ResponseEntity<?> addNewUser(@RequestBody @Valid UserAddRequest userUpdateRequest){
         return ResponseEntity.status(HttpStatus.OK).body(
                 ApiResponse.builder()
-                .statusCode(HttpStatus.OK.value())
-                .message("Update Successfully")
-                .data(userService.addNewUser(userUpdateRequest))
-                .build()
+                        .statusCode(HttpStatus.OK.value())
+                        .message("Update Successfully")
+                        .data(userService.addNewUser(userUpdateRequest))
+                        .build()
+        );
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateUser(@RequestBody @Valid UserUpdateRequest userUpdateRequest, @PathVariable Long id){
+        return ResponseEntity.status(HttpStatus.OK).body(
+                ApiResponse.builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .message("Update Successfully")
+                        .data(userService.updateUser(userUpdateRequest, id))
+                        .build()
         );
     }
 
