@@ -38,3 +38,4 @@ build/
 .DS_Store
 
 *.env
+/glampe-notification/src/main/resources/glampe-project-firebase-adminsdk-fbsvc-c6bf1b5009.json

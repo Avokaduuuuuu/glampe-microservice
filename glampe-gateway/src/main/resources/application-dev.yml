@@ -2,6 +2,20 @@ spring:
   cloud:
     gateway:
       routes:
+        - id: chat-websocket-native
+          uri: ws://localhost:8081
+          predicates:
+            - Path=/api/v1/chat/ws-native/**
+        - id: chat-websocket
+          uri: ws://localhost:8081
+          predicates:
+            - Path=/api/v1/chat/ws/**          # public URL
+        - id: chat-rest
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/v1/chat/**
+          filters:
+            - PreserveHostHeader
         - id: user-service
           uri: http://localhost:8081
           predicates:

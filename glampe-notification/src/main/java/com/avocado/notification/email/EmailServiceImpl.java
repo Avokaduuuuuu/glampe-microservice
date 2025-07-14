@@ -1,4 +1,4 @@
-package com.avocado.email;
+package com.avocado.notification.email;
 
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;

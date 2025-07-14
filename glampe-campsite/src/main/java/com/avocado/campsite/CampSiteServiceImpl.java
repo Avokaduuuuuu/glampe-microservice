@@ -86,7 +86,13 @@ public class CampSiteServiceImpl implements CampSiteService{
     @Override
     public PageResponse<CampSiteResponse> getAll(CampSiteFilterParams filterParams) {
         Specification<CampSiteEntity> specification = filterParams.getSpecification();
-        Sort sort = Sort.by(Sort.Direction.fromString(filterParams.getSortOrder()), filterParams.getSortBy());
+        Sort sort;
+        if (filterParams.getSortBy().equalsIgnoreCase("highest") || filterParams.getSortBy().equalsIgnoreCase("lowest")) {
+            sort = Sort.unsorted();
+        }else {
+            sort = Sort.by(Sort.Direction.fromString(filterParams.getSortOrder()), filterParams.getSortBy());
+        }
+
         Pageable pageable = PageRequest.of(filterParams.getCurrentPage(), filterParams.getPageSize(), sort);
 
         Page<CampSiteEntity> entities = campSiteRepository.findAll(specification, pageable);

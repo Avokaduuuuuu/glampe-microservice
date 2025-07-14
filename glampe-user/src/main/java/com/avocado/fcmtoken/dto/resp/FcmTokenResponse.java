@@ -1,4 +1,4 @@
-package com.avocado.email;
+package com.avocado.fcmtoken.dto.resp;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -8,8 +8,9 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class EmailEntity {
-    String to;
-    String subject;
-    String content;
+public class FcmTokenResponse {
+    Long id;
+    String token;
+    String deviceId;
+    Long userId;
 }

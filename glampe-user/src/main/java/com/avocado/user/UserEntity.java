@@ -86,6 +86,6 @@ public class UserEntity {
     @OneToMany(mappedBy = "user")
     List<PointTransactionEntity> pointTransactions;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     List<FcmTokenEntity> fcmTokens;
 }

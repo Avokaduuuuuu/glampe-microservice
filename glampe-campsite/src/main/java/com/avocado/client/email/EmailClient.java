@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 @FeignClient(name = "email-service", url = "http://localhost:8085", path = "/api/v1/notifications")
 public interface EmailClient {
 
-    @PostMapping
+    @PostMapping("/email")
     void sendEmail(@RequestBody EmailEntity emailEntity);
 }

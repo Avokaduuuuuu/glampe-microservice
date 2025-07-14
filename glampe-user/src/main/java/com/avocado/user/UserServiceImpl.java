@@ -2,8 +2,8 @@ package com.avocado.user;
 
 import com.avocado.exception.ResultCode;
 import com.avocado.exception.UserException;
-import com.avocado.user.cache.Cache;
-import com.avocado.user.cache.RedisPrefix;
+import com.avocado.cache.Cache;
+import com.avocado.cache.RedisPrefix;
 import com.avocado.user.dto.req.UserAddRequest;
 import com.avocado.user.dto.req.UserUpdateRequest;
 import com.avocado.user.dto.req.UserVerifyRequest;

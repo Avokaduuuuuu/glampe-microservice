@@ -25,6 +25,9 @@ public class PlaceTypeEntity {
     @Column(name = "name")
     String name;
 
+    @Column(name = "image")
+    String image;
+
     @Column(name = "is_deleted")
     Boolean isDeleted;
 

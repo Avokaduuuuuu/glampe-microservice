@@ -1,6 +1,6 @@
-package com.avocado.user.cache.impl;
+package com.avocado.cache.impl;
 
-import com.avocado.user.cache.Cache;
+import com.avocado.cache.Cache;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;

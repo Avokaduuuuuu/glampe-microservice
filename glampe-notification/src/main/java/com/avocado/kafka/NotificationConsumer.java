@@ -1,7 +1,7 @@
 package com.avocado.kafka;
 
-import com.avocado.email.EmailEntity;
-import com.avocado.email.EmailService;
+import com.avocado.notification.email.EmailEntity;
+import com.avocado.notification.email.EmailService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;

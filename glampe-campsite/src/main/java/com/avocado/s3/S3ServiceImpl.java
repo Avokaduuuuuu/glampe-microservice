@@ -12,6 +12,8 @@ import com.avocado.exception.ResultCode;
 import com.avocado.facility.FacilityEntity;
 import com.avocado.facility.FacilityRepository;
 import com.avocado.gallery.CampSiteGalleryEntity;
+import com.avocado.placetype.PlaceTypeEntity;
+import com.avocado.placetype.PlaceTypeRepository;
 import com.avocado.selection.SelectionEntity;
 import com.avocado.selection.SelectionRepository;
 import com.avocado.utility.UtilityEntity;
@@ -48,6 +50,7 @@ public class S3ServiceImpl implements S3Service {
     private final SelectionRepository selectionRepository;
     private final CampTypeRepository campTypeRepository;
     private final Cache<CampSiteResponse> cache;
+    private final PlaceTypeRepository placeTypeRepository;
 
     @Value("${aws.services.s3.bucket.name}")
     private String bucketName;
@@ -113,6 +116,15 @@ public class S3ServiceImpl implements S3Service {
                     facilityEntity.setImage(url);
                     facilityRepository.save(facilityEntity);
                 }
+                case "placeType" -> {
+                    PlaceTypeEntity placeTypeEntity = placeTypeRepository.findById(id)
+                            .orElseThrow(() -> new CampSiteException(ResultCode.PLACE_TYPE_NOT_FOUND));
+                    folder = "places";
+                    fileName = folder + "/" + System.currentTimeMillis() + "_" + file.getOriginalFilename();
+                    url += fileName;
+                    placeTypeEntity.setImage(url);
+                    placeTypeRepository.save(placeTypeEntity);
+                }
                 case "selection" -> {
                     SelectionEntity selectionEntity = selectionRepository.findById(id)
                             .orElseThrow(() -> new CampSiteException(ResultCode.SELECTION_NOT_FOUND));
@@ -147,7 +159,8 @@ public class S3ServiceImpl implements S3Service {
                             .build(),
                     RequestBody.fromBytes(file.getBytes())
             );
-        }catch (Exception e) {
+        }catch (IOException e) {
+            e.printStackTrace();
             throw new CampSiteException(ResultCode.INVALID_FILE);
         }
         return fileName;

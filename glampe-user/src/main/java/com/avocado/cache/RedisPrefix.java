@@ -1,4 +1,4 @@
-package com.avocado.user.cache;
+package com.avocado.cache;
 
 public enum RedisPrefix {
     USER,

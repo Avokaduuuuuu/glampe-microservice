@@ -12,6 +12,7 @@ import lombok.experimental.FieldDefaults;
 public class PlaceTypeResponse {
     Long id;
     String name;
+    String image;
     Boolean isDeleted;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     String createdAt;
