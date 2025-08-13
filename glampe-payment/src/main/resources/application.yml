@@ -1,15 +1,10 @@
-server:
-  port: 8084
-
 spring:
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: ${DATABASE_USERNAME:root}
-    password: ${DATABASE_PASSWORD:password}
-    url: jdbc:mysql://${DATABASE_HOST:host}:3306/${DATABASE_PAYMENT:payment}
+  application:
+    name: payment-service
 
-stripe:
-  publish:
-    key: ${STRIPE_PUBLISH_KEY}
-  secret:
-    key: ${STRIPE_SECRET_KEY}
+  config:
+    import: configserver:http://localhost:8888
+
+  cloud:
+    config:
+      fail-fast: true

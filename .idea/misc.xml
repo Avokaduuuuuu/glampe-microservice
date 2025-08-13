@@ -9,6 +9,8 @@
     </option>
     <option name="ignoredFiles">
       <set>
+        <option value="$PROJECT_DIR$/auth-service/pom.xml" />
+        <option value="$PROJECT_DIR$/glampe-auth-service/pom.xml" />
         <option value="$PROJECT_DIR$/glampe-media/pom.xml" />
       </set>
     </option>

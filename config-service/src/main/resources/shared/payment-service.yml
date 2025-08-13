@@ -1,0 +1,20 @@
+server:
+  port: 8084
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${DATABASE_USERNAME:root}
+    password: ${DATABASE_PASSWORD:password}
+    url: jdbc:mysql://${DATABASE_HOST:host}:3306/${DATABASE_PAYMENT:payment}
+  cloud:
+    openfeign:
+      micrometer:
+        enabled: true
+
+stripe:
+  publish:
+    key: ${STRIPE_PUBLISH_KEY}
+  secret:
+    key: ${STRIPE_SECRET_KEY}
+

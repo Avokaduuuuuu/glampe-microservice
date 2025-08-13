@@ -1,0 +1,53 @@
+security:
+  jwt:
+    secret: ${JWT_SECRET}
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: chat-websocket-native
+          uri: ws://localhost:8081
+          predicates:
+            - Path=/api/v1/chat/ws-native/**
+        - id: chat-websocket
+          uri: ws://localhost:8081
+          predicates:
+            - Path=/api/v1/chat/ws/**          # public URL
+        - id: chat-rest
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/v1/chat/**
+          filters:
+            - PreserveHostHeader
+        - id: user-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/v1/users/**
+        - id: campsite-service
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/v1/campsites/**
+        - id: booking-service
+          uri: http://localhost:8083
+          predicates:
+            - Path=/api/v1/bookings/**
+        - id: payment-service
+          uri: http://localhost:8084
+          predicates:
+            - Path=/api/v1/payments/**
+        - id: notification-service
+          uri: http://localhost:8085
+          predicates:
+            - Path=/api/v1/notifications/**
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+

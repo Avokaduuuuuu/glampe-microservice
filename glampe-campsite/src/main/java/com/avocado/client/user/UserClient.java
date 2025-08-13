@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import java.util.List;
 import java.util.Map;
 
-@FeignClient(name = "user-service", path = "/api/v1/users", url = "http://localhost:8081", configuration = FeignConfig.class)
+@FeignClient(name = "user-service", path = "/api/v1/users", configuration = FeignConfig.class)
 @Component
 public interface UserClient {
 

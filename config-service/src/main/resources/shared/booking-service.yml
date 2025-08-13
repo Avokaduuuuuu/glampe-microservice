@@ -1,0 +1,28 @@
+server:
+  port: 8083
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${DATABASE_USERNAME:root}
+    password: ${DATABASE_PASSWORD:password}
+    url: jdbc:mysql://${DATABASE_HOST:host}:3306/${DATABASE_BOOKING:DATABASE_BOOKING}
+
+  cloud:
+    openfeign:
+      micrometer:
+        enabled: true
+
+logging:
+  level:
+    com:
+      avocado:
+        client:
+          campsite: DEBUG
+
+feign:
+  client:
+    config:
+      default:
+        loggerLevel: FULL
+

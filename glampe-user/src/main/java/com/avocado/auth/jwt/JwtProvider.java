@@ -1,17 +1,15 @@
-package com.avocado.config.auth;
+package com.avocado.auth.jwt;
 
-import com.avocado.config.JwtProperty;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 
 @Component
@@ -26,7 +24,7 @@ public class JwtProvider {
                 .subject(subject)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + JwtProperty.TOKEN_EXPIRATION.getValue()))
-                .signWith(Keys.hmacShaKeyFor(JWT_SECRET.getBytes()))
+                .signWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode(JWT_SECRET)))
                 .compact();
     }
 
@@ -34,10 +32,10 @@ public class JwtProvider {
         return Jwts
                 .builder()
                 .subject(email)
-                .claim("role", roles)
+                .claim("roles", roles)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + JwtProperty.TOKEN_EXPIRATION.getValue()))
-                .signWith(Keys.hmacShaKeyFor(JWT_SECRET.getBytes()))
+                .signWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode(JWT_SECRET)))
                 .compact();
     }
 
@@ -63,9 +61,8 @@ public class JwtProvider {
                 .getPayload();
     }
 
-    public boolean isTokenValid(String token, UserDetails userDetails) {
-        final String email = parseSubject(token);
-        return (email.equals(userDetails.getUsername())) && !isTokenExpired(token);
+    public boolean isTokenValid(String token) {
+        return !isTokenExpired(token);
     }
 
     private boolean isTokenExpired(String token) {

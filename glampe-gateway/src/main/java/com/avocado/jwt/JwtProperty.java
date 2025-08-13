@@ -1,4 +1,4 @@
-package com.avocado.config;
+package com.avocado.jwt;
 
 public enum JwtProperty {
     TOKEN_EXPIRATION(1000 * 60 * 60 * 48L);
